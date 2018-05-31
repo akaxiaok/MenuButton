@@ -3,6 +3,7 @@
 
   function MenuButton(id, options) {
     options = options || {};
+    this.id = id;
     this.style = {
       buttonColor: options.buttonColor || '#adb5bd',
       buttonHoverColor: options.buttonHoverColor || '#0099ff',
@@ -29,12 +30,22 @@
       width: this.style.buttonWidth,
       color: this.style.buttonColor,
       float: 'left',
+      cursor: 'pointer',
+      background: 'none',
+      border: 'none',
     });
     this.menu = document.createElement('ul');
     if (this.menuItems) {
       var fragment = document.createDocumentFragment();
       this.menuItems.forEach(function (item) {
         var li = document.createElement('li');
+        li.callback = item.callback;
+        Object.assign(li.style, {
+          fontSize: '18px',
+          padding: '8px',
+          fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+          cursor: 'pointer'
+        });
         li.innerHTML = item.label;
         fragment.appendChild(li);
       });
@@ -44,16 +55,14 @@
 
     this.updateMenuStyle({
       width: 0,
-      height: 0,
       background: this.style.menuBackground,
       padding: 0,
       margin: 0,
       float: 'left',
       position: 'absolute',
-      display: 'none',
       overflow: 'hidden',
       transition: 'width .8s ease, height .8s ease',
-      'list-style': 'none',
+      listStyle: 'none',
     });
     this.element.appendChild(this.button);
     this.element.appendChild(this.menu);
@@ -76,17 +85,40 @@
         menuButton.outHover();
       }
     });
-    this.button.addEventListener('click', function () {
+
+    this.button.addEventListener('click', function (event) {
       if (!menuButton.hoverActive) {
-        menuButton.hideButton();
         menuButton.showMenu();
       }
+      event.stopPropagation();
     });
-    this.menu.addEventListener('mouseleave', function () {
-      menuButton.hideMenu();
-      menuButton.showButton();
 
-    })
+    document.addEventListener('click', function () {
+      menuButton.hideMenu();
+    });
+
+
+    this.menu.addEventListener('mouseover', function (event) {
+      if (event.target instanceof HTMLLIElement) {
+        Object.assign(event.target.style, {
+          background: 'rgba(0, 0, 0, 0.08)',
+        });
+      }
+    });
+
+    this.menu.addEventListener('mouseout', function (event) {
+      if (event.target instanceof HTMLLIElement) {
+        Object.assign(event.target.style, {
+          background: 'rgba(0, 0, 0, 0)',
+        });
+      }
+    });
+
+    this.menu.addEventListener('click', function (event) {
+      if (event.target instanceof HTMLLIElement) {
+        event.target.callback();
+      }
+    });
   };
 
   MenuButton.prototype.onHover = function () {
@@ -117,27 +149,15 @@
     var menuButton = this;
     menuButton.updateMenuStyle({
       width: 0,
-      height: 0,
     });
-    setTimeout(function () {
-      menuButton.updateMenuStyle({ display: 'none' });
-    }, 800)
+
   };
 
   MenuButton.prototype.showMenu = function () {
     var menuButton = this;
-
     menuButton.updateMenuStyle({
-      display: 'block',
+      width: menuButton.style.menuWidth,
     });
-
-    setTimeout(function () {
-      menuButton.updateMenuStyle({
-        width: menuButton.style.menuWidth,
-        height: menuButton.style.menuHeight,
-      })
-    }, 10)
-
   };
   window.MenuButton = MenuButton;
 })();

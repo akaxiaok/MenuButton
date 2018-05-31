@@ -10,12 +10,20 @@
 <div id="demoButtonHoverActive" ></div >
 <script >
   var items = [
-    { label: '1' },
-    { label: '2' }
+    {
+      label: '1', callback: function () {
+      console.log('this is first');
+    }
+    },
+    {
+      label: '2', callback: function () {
+      console.log('this is second');
+    }
+    }
   ];
   var options = { menuItems: items };
   var menuButton = new MenuButton('demoButton', options);
-//  var demoButtonHoverActive = new MenuButton('demoButtonHoverActive', { hoverActive: true });
+  //  var demoButtonHoverActive = new MenuButton('demoButtonHoverActive', { hoverActive: true });
 </script >
 </body >
 </html >
