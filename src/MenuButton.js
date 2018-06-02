@@ -52,7 +52,6 @@
       this.menu.appendChild(fragment);
     }
 
-
     this.updateMenuStyle({
       width: 0,
       background: this.style.menuBackground,
@@ -63,6 +62,7 @@
       overflow: 'hidden',
       transition: 'width .8s ease, height .8s ease',
       listStyle: 'none',
+      whiteSpace: 'nowrap',
     });
     this.element.appendChild(this.button);
     this.element.appendChild(this.menu);
